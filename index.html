@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartOwl - Intelligent Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet"/>
+    <style>
+        .home-layout {
+            background: url('../img/backgrr.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            position: relative;
+            color: white;
+        }
+        .home-layout::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 0;
+        }
+        .container, .navbar { position: relative; z-index: 1; }
+        
+        /* Glass-style login cards */
+        .card { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white; 
+            border-radius: 15px; 
+        }
+        .form-control {
+            background: rgba(0,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+        }
+        .form-control:focus {
+            background: rgba(0,0,0,0.5) !important;
+            color: white !important;
+            border-color: #46cc71 !important;
+            box-shadow: 0 0 5px rgba(70, 204, 113, 0.5);
+        }
+        input[type="file"]::file-selector-button {
+            background-color: rgba(46, 204, 113, 0.4);
+            color: white;
+            border: none;
+            margin-inline-end: 1rem;
+        }
+        .text-info { color: #a7bec8 !important; }
+        
+        .btn-calm {
+            background: rgba(46, 204, 113, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-calm:hover {
+            background: rgba(46, 204, 113, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+        }
+    </style>
+</head>
+
+<body class="home-layout text-start"> 
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top glass-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-info" href="index.html">
+                <img src="img/logo.png" alt="SmartOwl Logo" width="40" height="40" class="me-2" />
+                SmartOwl
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Intelligence</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Media Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link btn-dashboard" id="nav-dashboard" style="display: none !important;" href="bakara.html">Command Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="#" onclick="logout()">Sign Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container text-center py-5">
+            <h1 class="display-1 fw-bold mb-3" style="font-family: 'Michroma', sans-serif; color: #c6d4da;">SmartOwl</h1>
+            <p class="lead mb-4 fs-3" style="color: #c6d4da;">Welcome to your Intelligent Home Ecosystem</p>
+            
+            <div id="welcome-section" style="display: none !important;" class="status-overlay-rectangular">
+                <span class="status-text">System Identity: <strong id="userEmailDisplay"></strong></span>
+                <a href="bakara.html" class="btn btn-calm-rectangular status-btn">Access Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-5">
+        <div class="container">
+            <div id="auth-sections" class="row g-4 justify-content-center align-items-stretch" style="display: flex !important; flex-wrap: wrap;">
+                <!-- Register Column -->
+                <div class="col-12 col-md-6 col-lg-5">
+                    <div class="card p-4 shadow-lg h-100 d-flex flex-column">
+                        <h2 class="mb-4 text-center text-info">Register</h2>
+                        <div class="flex-grow-1">
+                            <div class="mb-3 text-start">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" />
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" />
+                            </div>
+                            
+                            <div class="mb-3 text-start">
+                                <label for="faceImage" class="form-label">Facial Image (for identification)</label>
+                                <input type="file" class="form-control" id="faceImage" accept="image/*">
+                                <div class="form-text text-white-50 small">Please upload a clear image of your face only</div>
+                            </div>
+
+                            <div class="alert alert-danger" id="error" style="display:none;"></div>
+                            
+                            <div id="loading" class="text-center my-2" style="display: none;">
+                                <div class="spinner-border text-success" role="status"></div>
+                                <span class="ms-2">Uploading image and creating user...</span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-calm w-100 py-2 mt-auto" onclick="sign()">Register</button>
+                    </div>
+                </div>
+
+                <!-- Login Column -->
+                <div class="col-12 col-md-6 col-lg-5">
+                    <div class="card p-4 shadow-lg h-100 d-flex flex-column">
+                        <h2 class="mb-4 text-center text-info">Login</h2>
+                        <div class="flex-grow-1">
+                            <div class="mb-3 text-start">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="emaillogin" />
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="passwordlogin" />
+                            </div>
+                            <div class="alert alert-danger" id="alert" style="display:none;"></div>
+                        </div>
+                        <button type="button" class="btn btn-calm w-100 py-2 mt-auto" onclick="login()">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script> 
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="js/main.js"></script> 
+    
+</body>
+</html>

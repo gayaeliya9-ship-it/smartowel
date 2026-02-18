@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>זיהוי פנים מול Firebase</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+        #container { position: relative; display: inline-block; margin-top: 20px; }
+        img { max-width: 300px; display: block; margin: 10px auto; border: 1px solid #ccc; }
+        .status { margin: 10px; font-weight: bold; color: blue; }
+        .match { color: green; font-size: 1.2em; }
+        .no-match { color: red; }
+    </style>
+</head>
+<body>
+
+    <h2>בדיקת התאמת פנים מול מאגר Firebase</h2>
+    
+    <div class="status" id="statusMsg">טוען מודלים לזיהוי פנים... אנא המתן</div>
+    
+    <input type="file" id="imageUpload" accept="image/*" disabled>
+    
+    <div id="container">
+        <img id="userImage" src="" alt="תמונה להעלאה" style="display:none;">
+    </div>
+
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+    <script>
+        // 1. הגדרות Firebase - עליך להדביק כאן את ההגדרות שלך
+        const firebaseConfig = {
+            apiKey: "AIzaSyBy3VwxAYJ4zfP1N4GJe7D1L7Sf-YlxTeE",
+            authDomain: "smarthouse-27843.firebaseapp.com",
+            databaseURL: "https://smarthouse-27843-default-rtdb.firebaseio.com",
+            projectId: "smarthouse-27843",
+            storageBucket: "smarthouse-27843.firebasestorage.app",
+            messagingSenderId: "361716939164",
+            appId: "1:361716939164:web:4d65492b9ff172264af059"
+        };
+
+        // אתחול Firebase
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        const imageUpload = document.getElementById('imageUpload');
+        const userImage = document.getElementById('userImage');
+        const statusMsg = document.getElementById('statusMsg');
+        const resultDiv = document.getElementById('result');
+
+        // 2. טעינת המודלים של face-api
+        // הערה: עדיף לשמור את תיקיית 'weights' מקומית, כאן אנו טוענים מגיטהאב
+        const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+
+        Promise.all([
+            faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL), // מזהה פרצופים
+            faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL), // מזהה תווי פנים
+            faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL) // ממיר פרצוף למספרים (Descriptor)
+        ]).then(startApp);
+
+        function startApp() {
+            statusMsg.innerText = "המערכת מוכנה. אנא בחר תמונה.";
+            statusMsg.style.color = "black";
+            imageUpload.disabled = false;
+        }
+
+        // 3. טיפול בהעלאת תמונה
+        imageUpload.addEventListener('change', async () => {
+            const file = imageUpload.files[0];
+            if (!file) return;
+
+            // הצגת התמונה שנבחרה
+            const imgUrl = URL.createObjectURL(file);
+            userImage.src = imgUrl;
+            userImage.style.display = 'block';
+            resultDiv.innerHTML = '';
+            statusMsg.innerText = "מעבד תמונה...";
+
+            // יצירת Descriptor לתמונה שהועלתה
+            const uploadedDescriptor = await getFaceDescriptor(userImage);
+
+            if (!uploadedDescriptor) {
+                statusMsg.innerText = "לא זוהו פנים בתמונה שהועלתה.";
+                return;
+            }
+
+            statusMsg.innerText = "סורק את מסד הנתונים בפיירבייס...";
+            await compareWithFirebase(uploadedDescriptor);
+        });
+
+        // פונקציית עזר להוצאת נתוני פנים מתמונה
+        async function getFaceDescriptor(imgElement) {
+            const detection = await faceapi.detectSingleFace(imgElement)
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+            
+            return detection ? detection.descriptor : null;
+        }
+
+        // 4. לוגיקה ראשית: השוואה מול Firebase
+        async function compareWithFirebase(uploadedDescriptor) {
+            const listRef = storage.ref("/users_faces"); // מצביע לשורש הבאקט (או לתת תיקייה אם צריך)
+            
+            try {
+                const res = await listRef.listAll();
+                let foundMatch = false;
+
+                // עובר על כל התמונות ב-Storage
+                for (const itemRef of res.items) {
+                    
+                    // בדיקה מהירה: מדלגים אם זה לא קובץ תמונה (אופציונלי)
+                    // if (!itemRef.name.match(/\.(jpg|jpeg|png)$/i)) continue;
+
+                    statusMsg.innerText = `בודק מול יוזר: ${itemRef.name}...`;
+
+                    const url = await itemRef.getDownloadURL();
+                    
+                    // טעינת התמונה מה-Storage לצורך בדיקה
+                    const imgFromStorage = await faceapi.fetchImage(url);
+                    
+                    // חישוב Descriptor לתמונה מהסטורג'
+                    const detection = await faceapi.detectSingleFace(imgFromStorage)
+                        .withFaceLandmarks()
+                        .withFaceDescriptor();
+
+                    if (detection) {
+                        // חישוב המרחק (השוני) בין הפנים
+                        const distance = faceapi.euclideanDistance(uploadedDescriptor, detection.descriptor);
+                        
+                        // מרחק קטן מ-0.6 נחשב בדרך כלל לאותו אדם
+                        if (distance < 0.6) {
+                            foundMatch = true;
+                            const uid = itemRef.name.split('.')[0]; // הסרת הסיומת (.jpg)
+                            resultDiv.innerHTML = `<h3 class="match">נמצאה התאמה!</h3><p>זהה ליוזר UID: <b>${uid}</b></p><p>רמת דיוק: ${Math.round((1-distance)*100)}%</p>`;
+                            statusMsg.innerText = "בדיקה הסתיימה.";
+                            break; // עוצרים ברגע שיש התאמה
+                        }
+                    }
+                }
+
+                if (!foundMatch) {
+                    statusMsg.innerText = "בדיקה הסתיימה.";
+                    resultDiv.innerHTML = `<h3 class="no-match">לא נמצאה התאמה במערכת.</h3>`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                statusMsg.innerText = "שגיאה בגישה ל-Firebase או בעיבוד.";
+            }
+        }
+    </script>
+</body>
+</html>

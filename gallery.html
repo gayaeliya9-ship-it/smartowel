@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Hydrovee</title>
+    <!-- טעינת Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- קובץ העיצוב האישי שלנו -->
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+    <style>
+        /* מוודא שכל התמונות בגלריה יהיו באותו גודל קבוע */
+        
+        .gallery-img {
+            width: 100%;
+            /* רוחב מלא של העמודה */
+            height: 220px;
+            /* גובה אחיד */
+            object-fit: cover;
+            /* חותך את התמונה כך שתתאים לגודל בלי לעוות אותה */
+            border-radius: 10px;
+            /* פינות מעוגלות */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            /* צל עדין */
+            transition: transform 0.3s;
+        }
+        /* אפקט hover כשעוברים עם העכבר */
+        
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="home-layout">
+
+    <!-- ניווט עליון (Navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top glass-navbar">
+        <div class="container">
+            <!-- לוגו + שם החברה -->
+            <a class="navbar-brand d-flex align-items-center fw-bold text-info" href="index.html">
+                <img src="img/logo.png" alt="SmartOwl Logo" width="40" height="40" class="me-2" />
+                SmartOwl
+            </a>
+
+            <!-- תפריט נפתח במסכים קטנים -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- קישורי ניווט -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Intelligence</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Media Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" id="nav-dashboard" href="bakara.html" style="display: none !important;">Command Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="#" onclick="logout()">Sign Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- כותרת עמוד -->
+    <section class="text-center py-5">
+        <div class="container">
+            <h1 class="text-primary fw-bold mb-3">גלריית SmartOwl</h1>
+
+        </div>
+    </section>
+
+    <!-- אזור הגלריה -->
+    <section class="container pb-5">
+        <div class="row g-4">
+            <!-- כל עמודה מכילה תמונה בגודל אחיד -->
+            <div class="col-md-4"><img src="img/mmm.png" class="gallery-img" alt="תמונה 1"></div>
+            <div class="col-md-4"><img src="img/smart_home.png" class="gallery-img" alt="תמונה 2"></div>
+            <div class="col-md-4"><img src="img/image.jfif" class="gallery-img" alt="תמונה 3"></div>
+
+        </div>
+    </section>
+
+    <!-- אזור הסרטון -->
+    <section class="py-5 text-center">
+        <div class="container video-container">
+            <h2 class="text-primary mb-4">צפו בסרטון של SmartOwl</h2>
+            <!-- סרטון מוטמע מ־YouTube -->
+            <div class="ratio ratio-16x9 mx-auto" style="max-width: 800px;">
+                <iframe src="img/VIDEO SMARTH.mp4" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- סקריפטים של Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

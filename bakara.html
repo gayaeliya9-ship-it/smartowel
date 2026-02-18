@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartOwl - Command Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="home-layout">
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top glass-navbar">
+        <div class="container d-flex justify-content-between">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-info" href="index.html">
+                <img src="img/logo.png" alt="SmartOwl Logo" width="40" height="40" class="me-2" />
+                SmartOwl
+            </a>
+            <ul class="navbar-nav d-flex flex-row justify-content-end align-items-center">
+                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">About Intelligence</a></li>
+                <li class="nav-item"><a class="nav-link" href="gallery.html">Media Gallery</a></li>
+                <li class="nav-item"><a class="nav-link" href="bakara.html">Command Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="javascript:void(0)" onclick="logout()" style="cursor: pointer;">Sign Out</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <h2 class="text-white text-center mb-5">Command Dashboard</h2>
+        
+        <div id="alarmWarning" class="alert alert-danger text-center fw-bold mb-4" style="display:none; animation: sirenFlash 1s infinite;">
+            ⚠️ Intrusion Alert! Movement detected in the house ⚠️
+        </div>
+
+        <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="comfort-tab" data-bs-toggle="tab" data-bs-target="#comfort" type="button">Comfort</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button">Security & Camera</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data" type="button">Data</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            
+            <div class="tab-pane fade show active" id="comfort" role="tabpanel">
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card p-4 text-center shadow-lg">
+                            <h5 class="text-info">Lighting</h5>
+                            <div id="lightBulbWrapper" class="lightbulb-container">
+                                <div class="bulb-3d"><div class="glass-highlight"></div></div>
+                                <div class="base-3d"></div>
+                            </div>
+                            <div class="card-controls">
+                                <div class="input-group mb-2">
+                                    <button class="btn btn-calm-neutral btn-sm" onclick="updateLightFromInput()">Set</button>
+                                    <input type="number" id="lightInput" class="form-control form-control-sm" placeholder="%">
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-6"><button class="btn btn-calm-on w-100" onclick="setLightState(true)">ON</button></div>
+                                    <div class="col-6"><button class="btn btn-calm-off w-100" onclick="setLightState(false)">OFF</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card p-4 text-center shadow-lg">
+                            <h5 class="text-info">Fan</h5>
+                            <div id="fanWrapper" class="fan-container">
+                                <div class="fan-blades">
+                                    <div class="blade"></div><div class="blade"></div><div class="blade"></div>
+                                </div>
+                                <div class="fan-center"></div>
+                            </div>
+                            <div class="card-controls row g-2">
+                                <div class="col-6"><button class="btn btn-calm-on w-100" onclick="controlDevice('fan', 66)">ON</button></div>
+                                <div class="col-6"><button class="btn btn-calm-off w-100" onclick="controlDevice('fan', 64)">OFF</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card p-4 text-center shadow-lg">
+                            <h5 class="text-info">Blinds</h5>
+                            <div id="blindsWrapper" class="window-container">
+                                <div class="window-glass"></div>
+                                <div class="blinds-set">
+                                    <div class="blind-slat"></div><div class="blind-slat"></div><div class="blind-slat"></div>
+                                    <div class="blind-slat"></div><div class="blind-slat"></div><div class="blind-slat"></div>
+                                </div>
+                            </div>
+                            <div class="card-controls row g-2">
+                                <div class="col-6"><button class="btn btn-calm-on w-100" onclick="controlDevice('blinds', 195)">OPEN</button></div>
+                                <div class="col-6"><button class="btn btn-calm-off w-100" onclick="controlDevice('blinds', 194)">CLOSE</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="security" role="tabpanel">
+                <div class="row g-4 justify-content-center">
+                    
+                    <div class="col-12 col-md-8">
+                        <div class="card p-4 text-center shadow-lg" style="min-height: auto;">
+                            <div class="d-flex justify-content-between w-100 mb-2">
+                                <h5 class="text-info">Live Camera</h5>
+                                <button class="btn btn-calm-neutral btn-sm" onclick="refreshCam()">Refresh Stream</button>
+                            </div>
+                            <div class="camera-frame">
+                                <img src="" id="camStream" class="camera-feed" alt="Camera Stream">
+                            </div>
+                            <small class="text-white-50 mt-2">IP: 172.20.10.11</small>
+                        </div>
+                    </div>
+
+                    <div class="w-100"></div>
+
+                    <div class="col-md-5 col-sm-6">
+                        <div class="card p-4 text-center shadow-lg">
+                            <h5 class="text-info">Entrance Door</h5>
+                            
+                            <div id="doorWrapper" class="door-scene">
+                                <div class="door-frame"><div class="door-leaf"><div class="door-handle"></div></div></div>
+                            </div>
+
+                            <div id="faceAuthContainer" style="display:none; margin-top:10px;">
+                                <video id="webcamVideo" width="100%" height="auto" autoplay muted></video>
+                                <div id="authStatus" class="mt-2 text-warning fw-bold small">Activating Camera...</div>
+                            </div>
+
+                            <div class="card-controls row g-2">
+                                <div class="col-6"><button class="btn btn-calm-on w-100" onclick="controlDevice('door', 3)">OPEN</button></div>
+                                <div class="col-6"><button class="btn btn-calm-off w-100" onclick="controlDevice('door', 2)">CLOSE</button></div>
+                                <div class="col-12 mt-2">
+                                    <button class="btn btn-outline-info w-100" onclick="startFaceAuth()">
+                                        <i class="bi bi-person-bounding-box me-2"></i>Open with Face Recognition
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 col-sm-6">
+                        <div class="card p-4 text-center shadow-lg" id="alarmCard">
+                            <h5 class="text-info">Alarm</h5>
+                            <div id="alarmWrapper" class="siren-container">
+                                <div class="siren-dome"></div>
+                                <div class="siren-base"></div>
+                            </div>
+                            <div class="card-controls">
+                                <button id="alarmToggleBtn" class="btn btn-calm-on w-100 py-2" onclick="toggleAlarmSystem()">Arm Alarm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="data" role="tabpanel">
+                <div class="row mt-2 justify-content-center">
+                    <div class="col-12 col-md-10">
+                        <div class="card p-4 shadow-lg text-white status-panel" style="min-height: auto; border: 1px solid rgba(255,255,255,0.2);">
+                            <h5 class="text-info text-center mb-4" style="letter-spacing: 1px;">
+                                <i class="bi bi-broadcast me-2"></i>Real-Time Metrics (Live)
+                            </h5>
+                            <div class="row text-center align-items-center w-100">
+                                <div class="col-md-3 col-6 border-end border-secondary mb-3 mb-md-0">
+                                    <h6 class="text-white-50"><i id="tempIcon" class="bi bi-thermometer-half"></i> Temperature</h6>
+                                    <p id="liveTemp" class="status-value text-info">--°C</p>
+                                </div>
+                                <div class="col-md-3 col-6 border-end border-secondary mb-3 mb-md-0">
+                                    <h6 class="text-white-50"><i id="weatherIcon" class="bi bi-cloud"></i> Humidity</h6>
+                                    <p id="liveRain" class="status-value text-white">--</p>
+                                </div>
+                                <div class="col-md-3 col-6 border-end border-secondary">
+                                    <h6 class="text-white-50"><i class="bi bi-sun"></i> Light Intensity (LDR)</h6>
+                                    <p id="liveLight" class="status-value text-white">--</p>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <h6 class="text-white-50"><i class="bi bi-shield-exclamation"></i> Distance</h6>
+                                    <p id="liveDist" class="status-value text-white">-- cm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+    </div>
+
+    <div class="modal fade" id="smartAlertModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertTitle"><i class="bi bi-robot me-2"></i>Efficiency and Comfort Suggestion</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="alertBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Thanks</button>
+            <button type="button" class="btn btn-calm-on" id="alertActionBtn">Execute</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade intruder-modal" id="intruderModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Severe Security Alert</h5>
+            <button type="button" class="btn-close btn-close-white" onclick="resetIntruderAlert()"></button>
+          </div>
+          <div class="modal-body text-center">
+             <i class="bi bi-bell-fill text-danger" style="font-size: 3.5rem; animation: sirenFlash 0.5s infinite;"></i>
+             <p class="intruder-text">Movement detected in the house!</p>
+             <p class="mb-0">Detected Distance: <span id="intruderDistVal" class="text-white fw-bold">--</span> cm</p>
+             <small class="text-white-50">The house buzzer is currently active.</small>
+          </div>
+          <div class="modal-footer border-0 justify-content-center">
+            <button type="button" class="btn btn-danger w-100 fw-bold" onclick="resetIntruderAlert()">Understood, Close Alert</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>

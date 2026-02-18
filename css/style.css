@@ -1,0 +1,392 @@
+/* General Fonts and Backgrounds */
+body {
+    font-family: 'Michroma', sans-serif;
+    margin: 0; padding: 0;
+    /* Adjustments for LTR layout */
+    text-align: left;
+}
+
+/* Universal Background Styling */
+body {
+    background: url('../img/backgrr.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    position: relative;
+    color: #a7bec8;
+}
+
+body::before {
+    content: "";
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Dark Background */
+.home-layout {
+    background: url('../img/backgrr.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    position: relative;
+    /* Ensure proper alignment for LTR */
+    direction: ltr;
+}
+.home-layout::before {
+    content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); z-index: 0;
+}
+
+/* Light Background (if needed) */
+.light-page-bg {
+    background: url('../img/bg-light.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    position: relative;
+}
+.light-page-bg::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.85); z-index: 0;
+}
+
+.container, .navbar, .content { position: relative; z-index: 1; }
+
+/* Design of Cards */
+.card {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 20px;
+    transition: transform 0.3s;
+    min-height: 380px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    /* Ensure proper alignment for LTR */
+    text-align: left;
+}
+.card:hover { transform: translateY(-5px); }
+.text-info { color: #a7bec8 !important; }
+
+/* Error Messages */
+.alert { display: none; margin-top: 10px; border-radius: 10px; }
+
+/* Navbar */
+.navbar-glass { background: rgba(0, 0, 0, 0.2) !important; backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: relative; z-index: 10; }
+.navbar-glass {
+    /* Adjust alignment for LTR */
+    text-align: left;
+}
+
+/* Buttons */
+.btn {
+    background: rgba(167, 190, 200, 0.1);
+    border: 1px solid #a7bec8;
+    color: #a7bec8;
+    text-transform: none !important;
+    border-radius: 0px !important;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.btn:hover {
+    background: rgba(167, 190, 200, 0.3);
+    box-shadow: 0 0 8px rgba(167, 190, 200, 0.5);
+}
+.btn {
+    /* Ensure consistent alignment */
+    text-align: center;
+}
+
+.btn-calm-on { background: rgba(46, 204, 113, 0.4); border-color: rgba(46, 204, 113, 0.2); }
+.btn-calm-on:hover { background: rgba(46, 204, 113, 0.6); box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+.btn-calm-off { background: rgba(149, 165, 166, 0.2); }
+.btn-calm-off:hover { background: rgba(149, 165, 166, 0.4); }
+.btn-calm-danger { background: rgba(231, 76, 60, 0.4); }
+.btn-calm-danger:hover { background: rgba(231, 76, 60, 0.6); box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
+.btn-calm-neutral { background: rgba(255, 255, 255, 0.15); }
+.btn-calm-neutral:hover { background: rgba(255, 255, 255, 0.25); }
+
+.form-control { background: rgba(0, 0, 0, 0.3) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: white !important; }
+.card-controls { width: 100%; margin-top: auto; }
+
+/* --- Animations and 3D Elements --- */
+
+/* Light Bulb */
+.lightbulb-container { display: flex; flex-direction: column; align-items: center; margin: 20px 0; height: 100px; transition: transform 0.6s ease; }
+.bulb-3d { width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, #444, #111); border-radius: 50% 50% 45% 45%; position: relative; box-shadow: inset -5px -5px 12px rgba(0,0,0,0.6); transition: all 0.5s ease; }
+.base-3d { width: 36px; height: 32px; background: linear-gradient(to right, #333, #777 50%, #333); margin-top: -6px; border-radius: 0 0 5px 5px; }
+
+/* Door */
+.door-scene { width: 80px; height: 120px; perspective: 600px; margin: 20px auto; }
+.door-frame { width: 100%; height: 100%; background: #34495e; border: 4px solid #2c3e50; position: relative; transform-style: preserve-3d; }
+.door-leaf { width: 100%; height: 100%; background: #8d6e63; border: 2px solid #5d4037; position: absolute; left: 0; top: 0; transform-origin: left; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+.door-handle { width: 8px; height: 8px; background: #f1c40f; border-radius: 50%; }
+
+/* Fan */
+.fan-container { width: 100px; height: 100px; position: relative; margin: 20px auto; }
+.fan-blades { width: 100%; height: 100%; position: absolute; transition: transform 0.5s ease-in; }
+.blade { width: 40px; height: 40px; position: absolute; top: 50%; left: 50%; background: linear-gradient(135deg, #ccc, #888); border-radius: 50% 0 50% 0; transform-origin: 0 0; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+.blade:nth-child(1) { transform: rotate(0deg); } .blade:nth-child(2) { transform: rotate(120deg); } .blade:nth-child(3) { transform: rotate(240deg); }
+.fan-center { width: 20px; height: 20px; background: radial-gradient(circle, #fff, #333); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 0 0 5px rgba(0,0,0,0.8); }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Windows */
+.window-container { width: 90px; height: 110px; background: #2c3e50; border: 4px solid #555; position: relative; margin: 20px auto; box-shadow: inset 0 0 10px rgba(0,0,0,0.7); overflow: hidden; border-radius: 4px; }
+.window-glass { width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: linear-gradient(to bottom, #87CEEB 0%, #191970 100%); opacity: 0.6; }
+.blinds-set { width: 100%; height: 100%; display: flex; flex-direction: column; transition: transform 1s ease-in-out; transform: translateY(0); }
+.blind-slat { flex: 1; background: linear-gradient(to bottom, #eee, #ccc); border-bottom: 1px solid #999; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+/* Siren */
+.siren-container { width: 90px; height: 90px; position: relative; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.siren-dome { width: 70px; height: 50px; background: radial-gradient(circle at 30% 30%, #550000, #220000); border-radius: 50% 50% 10% 10%; border: 2px solid #330000; box-shadow: inset -2px -2px 10px rgba(0,0,0,0.8); transition: all 0.3s; position: relative; z-index: 2; }
+.siren-base { width: 80px; height: 25px; background: linear-gradient(to bottom, #444, #111); border-radius: 10px; margin-top: -5px; border-top: 3px solid #666; z-index: 1; }
+@keyframes sirenFlash { 0%, 100% { background: radial-gradient(circle at 30% 30%, #ff0000, #990000); box-shadow: 0 0 20px #ff0000, 0 0 60px rgba(255, 0, 0, 0.6); } 50% { background: radial-gradient(circle at 30% 30%, #880000, #440000); box-shadow: 0 0 5px #ff0000; } }
+
+/* Status */
+.status-panel h6 { font-size: 0.9rem; margin-bottom: 5px; opacity: 0.8; }
+.status-value { font-size: 1.5rem; font-weight: bold; }
+
+/* Models */
+.modal-content { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+.modal-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.modal-footer { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.intruder-modal .modal-content { background: rgba(139, 0, 0, 0.95); border: 2px solid #ff4444; box-shadow: 0 0 30px rgba(255, 0, 0, 0.5); }
+.intruder-text { font-size: 1.3rem; font-weight: bold; color: #ffcccc; margin-top: 15px; }
+
+/* Nav Tabs */
+.nav-tabs { border-bottom: 1px solid rgba(255, 255, 255, 0.2); margin-bottom: 25px; }
+.nav-link { color: rgba(255,255,255,0.6); border: none; font-weight: bold; }
+.nav-link:hover { color: white; }
+.nav-link.active { background: rgba(255,255,255,0.1) !important; color: white !important; border-radius: 10px 10px 0 0; }
+
+/* Camera */
+.camera-frame { 
+    width: 100%; 
+    max-width: 350px; 
+    aspect-ratio: 1 / 1; 
+    margin: 0 auto; 
+    background: #000; 
+    border-radius: 10px; 
+    overflow: hidden; 
+    position: relative; 
+    border: 1px solid rgba(255,255,255,0.2); 
+}
+.camera-feed { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- Face Recognition --- */
+#faceAuthContainer {
+    position: relative;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    border: 1px solid rgba(13, 202, 240, 0.3);
+    animation: fadeIn 0.5s ease-in-out;
+}
+#webcamVideo {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid #0dcaf0;
+    box-shadow: 0 0 15px rgba(13, 202, 240, 0.2);
+    transform: scaleX(-1);
+    object-fit: cover;
+}
+#authStatus {
+    font-family: 'Michroma', sans-serif;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.btn-outline-info { color: #0dcaf0; border-color: #0dcaf0; background: transparent; transition: all 0.3s ease; }
+.btn-outline-info:hover { background: rgba(13, 202, 240, 0.2); color: #fff; box-shadow: 0 0 15px #0dcaf0; transform: scale(1.02); }
+
+/* --- ACTIVE STATES (critical for animations!) --- */
+.is-on .bulb-3d { background: radial-gradient(circle at 30% 30%, #fff, #f1c40f 60%, #d4ac0d); box-shadow: 0 0 40px #f1c40f, 0 0 80px rgba(241, 196, 15, 0.4); }
+.door-open .door-leaf { transform: rotateY(-110deg); background: #a1887f; }
+.window-open .blinds-set { transform: translateY(-80%); }
+.fan-active .fan-blades { animation: spin 0.6s linear infinite; }
+.alarm-active .siren-dome { animation: sirenFlash 0.8s infinite ease-in-out; }
+
+/* Minimalist Overlay Style for Welcome Section */
+.status-overlay {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 600px;
+    text-align: center;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    color: #a7bec8;
+}
+
+.status-btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+/* Rectangular Glassmorphism Overlay for Welcome Section */
+.status-overlay-rectangular {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 2px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 600px;
+    text-align: center;
+}
+
+.status-btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    border-radius: 0px;
+}
+
+.btn-calm-rectangular {
+    background: rgba(46, 204, 113, 0.4);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-calm-rectangular:hover {
+    background: rgba(46, 204, 113, 0.6);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Button Typography */
+.btn {
+    text-transform: none !important;
+}
+
+/* Hero Section Typography */
+.hero h1 {
+    color: #a7bec8;
+    font-family: 'Michroma', sans-serif;
+    font-weight: bold;
+}
+.hero p {
+    color: #a7bec8;
+}
+
+/* Glass-style Navbar */
+.glass-navbar {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0px !important;
+}
+
+.glass-navbar .navbar-brand {
+    color: #a7bec8 !important;
+    text-transform: none !important;
+    font-family: 'Michroma', sans-serif;
+}
+
+.glass-navbar .nav-link {
+    color: #a7bec8 !important;
+    text-transform: none !important;
+    font-weight: 400 !important;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.glass-navbar .nav-link:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(167, 190, 200, 0.8);
+    font-weight: 400 !important; /* Prevent jumping */
+}
+
+.glass-navbar .btn-dashboard {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-weight: normal;
+    color: #a7bec8 !important;
+    text-transform: none !important;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.glass-navbar .btn-dashboard:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(167, 190, 200, 0.8);
+}
+
+.glass-navbar .nav-link.text-danger {
+    color: #a7bec8 !important;
+    font-weight: normal;
+    text-transform: none !important;
+    border-radius: 0px !important;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.glass-navbar .nav-link.text-danger:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(167, 190, 200, 0.8);
+}
+
+/* Navbar Flexbox Alignment */
+.glass-navbar .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    white-space: nowrap;
+    gap: 1rem;
+}
+
+.glass-navbar .nav-link {
+    color: #a7bec8 !important;
+    text-transform: none !important;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.glass-navbar .nav-link:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(167, 190, 200, 0.8);
+}
+
+/* Glassmorphism Panel Styling */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(167, 190, 200, 0.3);
+    padding: 3rem;
+    margin: 100px auto;
+    max-width: 900px;
+    border-radius: 0px;
+    color: #a7bec8;
+}
+
+/* Transparent Video Styling */
+.video-container {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(167, 190, 200, 0.3);
+    padding: 1rem;
+    border-radius: 0px;
+}
+
+.video-container iframe {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
