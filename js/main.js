@@ -338,9 +338,27 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Listeners
-database.ref('camIp').on('value', (s) => { 
-    const ip = s.val(); 
-    if(ip) { globalCamIp = ip; document.getElementById('camStream').src = `http://${ip}:81/stream`; } 
+// האזנה לשינויים בכתובת ה-IP בפיירבייס
+database.ref('camIp').on('value', (snapshot) => { 
+    const ip = snapshot.val(); 
+    
+    if(ip) { 
+        // שמירת ה-IP למשתנה גלובלי (לשימוש בפונקציות אחרות כמו זיהוי פנים)
+        globalCamIp = ip; 
+        
+        // איתור אלמנט התמונה ב-DOM
+        const camEl = document.getElementById('camStream');
+        
+        if(camEl) {
+            // עדכון המקור לכתובת הסטרים (נתיב :81/stream הוא הסטנדרט ב-ESP32-CAM)
+            // הוספת Math.random() מונעת מהדפדפן לשמור Cache של תמונה קפואה
+            camEl.src = `http://${ip}:81/stream`; 
+            
+            console.log("Camera stream updated to:", camEl.src);
+        }
+    } else {
+        console.log("Waiting for Camera IP...");
+    }
 });
 database.ref('fromAltera').on('value', (s) => {
     const d = s.val();
