@@ -2,12 +2,15 @@
 body {
     font-family: 'Michroma', sans-serif;
     margin: 0; padding: 0;
-    /* Adjustments for LTR layout */
-    text-align: left;
+    text-align: left; /* Adjustments for LTR layout */
+    
+    /* תיקון: צבע רקע כהה כגיבוי למקרה שהתמונה לא נטענת */
+    background-color: #1b262c; 
 }
 
 /* Universal Background Styling */
 body {
+    /* ודאי שהתיקייה נקראת img באותיות קטנות והקובץ backgrr.jpg */
     background: url('../img/backgrr.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
@@ -17,7 +20,7 @@ body {
 
 body::before {
     content: "";
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5); /* השכבה הכהה - עכשיו היא תשב על רקע כהה בכל מקרה */
     position: fixed;
     top: 0;
     left: 0;
@@ -28,20 +31,29 @@ body::before {
 
 /* Dark Background */
 .home-layout {
+    /* תיקון: צבע גיבוי גם כאן */
+    background-color: #1b262c;
     background: url('../img/backgrr.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
     position: relative;
-    /* Ensure proper alignment for LTR */
-    direction: ltr;
+    direction: ltr; /* Ensure proper alignment for LTR */
 }
+
 .home-layout::before {
-    content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: transparent;
+    content: ""; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 0;
 }
 
 /* Light Background (if needed) */
 .light-page-bg {
+    background-color: #f0f0f0; /* צבע גיבוי בהיר */
     background: url('../img/bg-light.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
@@ -64,8 +76,7 @@ body::before {
     transition: transform 0.3s;
     min-height: 380px;
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-    /* Ensure proper alignment for LTR */
-    text-align: left;
+    text-align: left; /* Ensure proper alignment for LTR */
 }
 .card:hover { transform: translateY(-5px); }
 .text-info { color: #a7bec8 !important; }
@@ -75,10 +86,7 @@ body::before {
 
 /* Navbar */
 .navbar-glass { background: rgba(0, 0, 0, 0.2) !important; backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: relative; z-index: 10; }
-.navbar-glass {
-    /* Adjust alignment for LTR */
-    text-align: left;
-}
+.navbar-glass { text-align: left; /* Adjust alignment for LTR */ }
 
 /* Buttons */
 .btn {
@@ -88,14 +96,11 @@ body::before {
     text-transform: none !important;
     border-radius: 0px !important;
     transition: background 0.3s ease, box-shadow 0.3s ease;
+    text-align: center; /* Ensure consistent alignment */
 }
 .btn:hover {
     background: rgba(167, 190, 200, 0.3);
     box-shadow: 0 0 8px rgba(167, 190, 200, 0.5);
-}
-.btn {
-    /* Ensure consistent alignment */
-    text-align: center;
 }
 
 .btn-calm-on { background: rgba(46, 204, 113, 0.4); border-color: rgba(46, 204, 113, 0.2); }
