@@ -17,50 +17,33 @@ const auth = firebase.auth();
 const database = firebase.database();
 const storage = firebase.storage();
 
-// --- בדיקת משתמש מחובר (המקור היחיד לאמת) ---
+// --- בדיקת משתמש מחובר ---
 auth.onAuthStateChanged((user) => {
     const navDashboard = document.getElementById('nav-dashboard');
     const authSections = document.getElementById('auth-sections');
     const welcomeSection = document.getElementById('welcome-section');
 
     if (user) {
-        // User is logged in
-        if (navDashboard) {
-            navDashboard.style.setProperty('display', 'block', 'important');
-        }
-        if (authSections) {
-            authSections.style.display = 'none';
-        }
+        if (navDashboard) navDashboard.style.setProperty('display', 'block', 'important');
+        if (authSections) authSections.style.display = 'none';
         if (welcomeSection) {
             welcomeSection.style.display = 'block';
             document.getElementById('userEmailDisplay').textContent = user.email;
         }
     } else {
-        // User is logged out
-        if (navDashboard) {
-            navDashboard.style.setProperty('display', 'none', 'important');
-        }
-        if (authSections) {
-            authSections.style.setProperty('display', 'flex', 'important');
-        }
-        if (welcomeSection) {
-            welcomeSection.style.display = 'none';
-        }
-        // Redirect to Home if on Dashboard page
+        if (navDashboard) navDashboard.style.setProperty('display', 'none', 'important');
+        if (authSections) authSections.style.setProperty('display', 'flex', 'important');
+        if (welcomeSection) welcomeSection.style.display = 'none';
         if (window.location.pathname.includes('bakara.html')) {
             window.location.replace('index.html');
         }
-        
-        // ניקוי שאריות זיכרון
         localStorage.removeItem("authUser");
     }
 });
 
-console.log("SmartOwl System Loaded - Auth Managed by Firebase Only");
+console.log("SmartOwl System Loaded - ESP32 Capture Mode");
 
-// --- 2. פונקציות התחברות והרשמה (חדש!) ---
-
-// פונקציית התחברות
+// --- 2. פונקציות התחברות והרשמה ---
 window.login = function() {
     const email = document.getElementById('emaillogin').value;
     const password = document.getElementById('passwordlogin').value;
@@ -72,16 +55,11 @@ window.login = function() {
     }
 
     auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            console.log("Login successful");
-            // אין צורך בפקודת מעבר דף, ה-Listener למעלה יעשה את זה
-        })
         .catch((error) => {
             if(alertDiv) { alertDiv.innerText = "Login failed: " + error.message; alertDiv.style.display = "block"; }
         });
 };
 
-// פונקציית הרשמה עם תמונה
 window.sign = function() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -91,12 +69,8 @@ window.sign = function() {
 
     if (errorDiv) { errorDiv.style.display = "none"; errorDiv.innerText = ""; }
 
-    if (!email || !password) {
-        if(errorDiv) { errorDiv.innerText = "Valid email and password required."; errorDiv.style.display = "block"; }
-        return;
-    }
-    if (fileInput.files.length === 0) {
-        if(errorDiv) { errorDiv.innerText = "Face image required."; errorDiv.style.display = "block"; }
+    if (!email || !password || fileInput.files.length === 0) {
+        if(errorDiv) { errorDiv.innerText = "All fields + Face Image are required."; errorDiv.style.display = "block"; }
         return;
     }
 
@@ -123,7 +97,6 @@ window.sign = function() {
                         }).then(() => {
                             if(loadingDiv) loadingDiv.style.display = "none";
                             alert("Registration successful!");
-                            // ה-Listener יכניס אותך אוטומטית
                         });
                     });
                 }
@@ -135,23 +108,14 @@ window.sign = function() {
         });
 };
 
-// --- 3. פונקציית התנתקות (נקייה) ---
 window.logout = function() {
-    console.log("Logging out...");
     auth.signOut().then(() => {
-        localStorage.removeItem("authUser");
         localStorage.clear();
-        // אין reload - ה-Listener מעדכן את המסך מיד
-    }).catch((error) => {
-        console.error('Logout error:', error);
     });
 };
 
-
-// --- 4. משתני מערכת (Smart Home Logic) ---
-let currentHomeState = { 
-    doorOpen: false, lights: false, alarmArmed: false, fanOn: false, blindsOpen: false 
-};
+// --- 3. משתני מערכת ---
+let currentHomeState = { doorOpen: false, lights: false, alarmArmed: false, fanOn: false, blindsOpen: false };
 let lastFanAlertTime = 0;
 let lastBlindAlertTime = 0;
 const ALERT_COOLDOWN = 60000; 
@@ -160,14 +124,14 @@ let isIntruderShown = false;
 let smartModal;
 let intruderModal;
 let globalCamIp = ""; 
+let scanAttempts = 0; // מונה ניסיונות סריקה
 
-// --- טעינת מודלים לזיהוי פנים ---
+// --- 4. טעינת מודלים ---
 const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models'; 
 let isModelsLoaded = false;
 
 async function loadFaceModels() {
     try {
-        console.log("Loading Face API models...");
         await Promise.all([
             faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
             faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
@@ -185,106 +149,148 @@ loadFaceModels();
 window.refreshCam = function() {
     var camEl = document.getElementById('camStream');
     if (camEl && globalCamIp) {
+        // רענון הזרם החי לתצוגה בלבד
         camEl.src = `http://${globalCamIp}:81/stream?t=${new Date().getTime()}`;
     }
 };
 
 window.controlDevice = function(device, code) {
-    console.log(`Command: ${device} -> ${code}`); 
     database.ref('smartHouse/toAltera').set(code);
     
-    // אופטימיזציה של ה-UI
     if (device === 'fan') { database.ref('smartHouse/fan').set(code); window.updateFanUI(code === 66); } 
     else if (device === 'blinds') { database.ref('smartHouse/blinds').set(code); window.updateBlindsUI(code === 195); } 
     else if (device === 'door') { database.ref('smartHouse/door').set(code); window.updateDoorUI(code === 3); } 
     else if (device === 'alarm') { database.ref('smartHouse/alarm').set(code); window.updateAlarmUI(code === 129); }
 };
 
-// --- לוגיקה לזיהוי פנים דרך ESP32 ---
+// --- 6. לוגיקה לזיהוי פנים (ESP32 CAPTURE) ---
 window.startFaceAuth = async function() {
     if (!isModelsLoaded) { alert("Models loading..."); return; }
-    if (!globalCamIp) { alert("No Camera IP found."); return; }
+    if (!globalCamIp) { alert("Camera IP not found yet."); return; }
 
     const statusText = document.getElementById('authStatus');
     const authContainer = document.getElementById('faceAuthContainer');
     const doorWrapper = document.getElementById('doorWrapper');
     const videoEl = document.getElementById('webcamVideo'); 
 
+    // הגדרת UI
     if(doorWrapper) doorWrapper.style.display = 'none';
     if(authContainer) authContainer.style.display = 'block';
-    if(videoEl) videoEl.style.display = "none"; 
+    if(videoEl) videoEl.style.display = "none"; // מחביאים את הוידאו כי אנחנו משתמשים בתמונה
 
-    statusText.innerText = "Capturing from Door...";
+    // הכנה לתמונה
+    let previewImg = document.getElementById('previewCapture');
+    if (!previewImg) {
+        previewImg = document.createElement('img');
+        previewImg.id = 'previewCapture';
+        previewImg.style.width = '100%';
+        previewImg.style.borderRadius = '10px';
+        previewImg.style.marginBottom = '10px';
+        authContainer.insertBefore(previewImg, statusText);
+    }
+    previewImg.style.display = 'block';
+    
+    scanAttempts = 0; // איפוס מונה
+    performEspCapture(statusText, previewImg);
+};
+
+// פונקציה שמבצעת צילום וניתוח (רקורסיבית במקרה של כישלון)
+async function performEspCapture(statusText, previewImg) {
+    if (scanAttempts >= 5) {
+        statusText.innerHTML = `<span class="text-danger">Failed to identify after 5 attempts.</span>`;
+        setTimeout(window.resetAuthUI, 3000);
+        return;
+    }
+
+    scanAttempts++;
+    statusText.innerText = `Attempt ${scanAttempts}/5: Capturing from Door...`;
     statusText.className = "mt-2 text-warning fw-bold small";
 
     try {
+        // שימוש ב-/capture במקום /stream כדי למנוע את השגיאה
+        // מוסיפים timestamp כדי שהדפדפן לא יביא תמונה מהמטמון
         const captureUrl = `http://${globalCamIp}/capture?t=${new Date().getTime()}`;
-        const imgFromEsp = await faceapi.fetchImage(captureUrl);
-        statusText.innerText = "Processing...";
         
-        let previewImg = document.getElementById('previewCapture');
-        if (!previewImg) {
-            previewImg = document.createElement('img');
-            previewImg.id = 'previewCapture';
-            previewImg.style.width = '100%';
-            previewImg.style.borderRadius = '10px';
-            authContainer.insertBefore(previewImg, statusText);
-        }
+        // טעינת התמונה לתוך face-api
+        const imgFromEsp = await faceapi.fetchImage(captureUrl);
+        
+        // הצגת התמונה למשתמש שיראה מה צולם
         previewImg.src = captureUrl;
-        previewImg.style.display = 'block';
 
-        await performFaceScanOnImage(imgFromEsp, statusText);
+        statusText.innerText = "Processing image...";
+        
+        // שליחה לזיהוי
+        await analyzeImage(imgFromEsp, statusText, previewImg);
+
     } catch (err) {
-        console.error("Error capturing from ESP32:", err);
-        statusText.innerText = "Error fetching image from door.";
-        setTimeout(window.resetAuthUI, 3000);
+        console.error("ESP32 Capture Error:", err);
+        statusText.innerText = "Connection error. Retrying...";
+        setTimeout(() => performEspCapture(statusText, previewImg), 1500);
     }
-};
+}
+
+async function analyzeImage(inputImage, statusText, previewImg) {
+    const user = firebase.auth().currentUser;
+    if (!user) { statusText.innerText = "Error: Not Logged In"; setTimeout(window.resetAuthUI, 3000); return; }
+
+    try {
+        const detection = await faceapi.detectSingleFace(inputImage).withFaceLandmarks().withFaceDescriptor();
+        
+        if (!detection) {
+            statusText.innerText = "No face detected in this frame. Retrying...";
+            setTimeout(() => performEspCapture(statusText, previewImg), 1000);
+            return;
+        }
+
+        statusText.innerText = "Verifying identity...";
+        const userImageRef = storage.ref(`users_faces/${user.uid}.jpg`); 
+        const url = await userImageRef.getDownloadURL();
+        const imgFromStorage = await faceapi.fetchImage(url);
+        
+        const sourceDetection = await faceapi.detectSingleFace(imgFromStorage).withFaceLandmarks().withFaceDescriptor();
+        
+        if (!sourceDetection) {
+            statusText.innerText = "Profile image invalid (bad source photo).";
+            setTimeout(window.resetAuthUI, 3000);
+            return;
+        }
+
+        // חישוב מרחק והמרה לאחוזים
+        const distance = faceapi.euclideanDistance(detection.descriptor, sourceDetection.descriptor);
+        const matchPercentage = Math.round((1 - distance) * 100);
+
+        console.log(`Match: ${matchPercentage}% (Dist: ${distance})`);
+
+        // --- בדיקת 55% ---
+        if (matchPercentage >= 55) {
+            statusText.innerHTML = `<span class="text-success">Access Granted! (${matchPercentage}%)</span>`;
+            window.controlDevice('door', 3);
+            setTimeout(window.resetAuthUI, 4000);
+        } else {
+            statusText.innerText = `Low Match (${matchPercentage}%). Retrying...`;
+            setTimeout(() => performEspCapture(statusText, previewImg), 1000);
+        }
+
+    } catch (error) {
+        console.error(error);
+        statusText.innerText = "Analysis Error. Retrying...";
+        setTimeout(() => performEspCapture(statusText, previewImg), 1000);
+    }
+}
 
 window.resetAuthUI = function() {
     const authContainer = document.getElementById('faceAuthContainer');
     const doorWrapper = document.getElementById('doorWrapper');
     const statusText = document.getElementById('authStatus');
     const previewImg = document.getElementById('previewCapture');
+    
     if(authContainer) authContainer.style.display = 'none';
     if(doorWrapper) doorWrapper.style.display = 'block';
     if(statusText) statusText.innerText = "";
     if(previewImg) previewImg.style.display = 'none';
 };
 
-async function performFaceScanOnImage(inputImage, statusText) {
-    const user = firebase.auth().currentUser;
-    if (!user) { statusText.innerText = "Error: Not Logged In"; setTimeout(window.resetAuthUI, 3000); return; }
-
-    const detection = await faceapi.detectSingleFace(inputImage).withFaceLandmarks().withFaceDescriptor();
-    if (!detection) { statusText.innerText = "No face detected."; setTimeout(window.resetAuthUI, 3000); return; }
-
-    statusText.innerText = "Verifying identity...";
-    const userImageRef = storage.ref(`users_faces/${user.uid}.jpg`); 
-    try {
-        const url = await userImageRef.getDownloadURL();
-        const imgFromStorage = await faceapi.fetchImage(url);
-        const sourceDetection = await faceapi.detectSingleFace(imgFromStorage).withFaceLandmarks().withFaceDescriptor();
-        
-        if (!sourceDetection) { statusText.innerText = "Profile image invalid."; setTimeout(window.resetAuthUI, 3000); return; }
-
-        const distance = faceapi.euclideanDistance(detection.descriptor, sourceDetection.descriptor);
-        if (distance < 0.45) {
-            statusText.innerHTML = `<span class="text-success">Access Granted!</span>`;
-            window.controlDevice('door', 3);
-        } else {
-            statusText.innerHTML = `<span class="text-danger">Access Denied.</span>`;
-            window.controlDevice('door', 2);
-        }
-    } catch (error) {
-        console.error(error);
-        statusText.innerText = "Verification Error";
-        window.controlDevice('door', 2);
-    }
-    setTimeout(window.resetAuthUI, 4000); 
-}
-
-// --- עדכוני ממשק וחיישנים ---
+// --- 7. עדכוני ממשק וחיישנים ---
 window.toggleAlarmSystem = function() { 
     const newCode = currentHomeState.alarmArmed ? 128 : 129;
     window.controlDevice('alarm', newCode);
@@ -338,27 +344,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Listeners
-// האזנה לשינויים בכתובת ה-IP בפיירבייס
-database.ref('camIp').on('value', (snapshot) => { 
-    const ip = snapshot.val(); 
-    
-    if(ip) { 
-        // שמירת ה-IP למשתנה גלובלי (לשימוש בפונקציות אחרות כמו זיהוי פנים)
-        globalCamIp = ip; 
-        
-        // איתור אלמנט התמונה ב-DOM
-        const camEl = document.getElementById('camStream');
-        
-        if(camEl) {
-            // עדכון המקור לכתובת הסטרים (נתיב :81/stream הוא הסטנדרט ב-ESP32-CAM)
-            // הוספת Math.random() מונעת מהדפדפן לשמור Cache של תמונה קפואה
-            camEl.src = `http://${ip}:81/stream`; 
-            
-            console.log("Camera stream updated to:", camEl.src);
-        }
-    } else {
-        console.log("Waiting for Camera IP...");
-    }
+database.ref('camIp').on('value', (s) => { 
+    const ip = s.val(); 
+    if(ip) { globalCamIp = ip; document.getElementById('camStream').src = `http://${ip}:81/stream`; } 
 });
 database.ref('fromAltera').on('value', (s) => {
     const d = s.val();
