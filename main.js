@@ -352,7 +352,29 @@ database.ref('fromAltera').on('value', (s) => {
     const d = s.val();
     if(d) {
         const now = Date.now();
-        document.getElementById('liveLight').innerText = d.B || d.L || 0;
+        // --- מערכת תאורה אוטומטית מקושרת לחיישן ה-LDR ---
+        const ldrVal = d.B !== undefined ? d.B : (d.L || 0);
+        document.getElementById('liveLight').innerText = ldrVal;
+
+        // חישוב אחוז ההארה: ה-LDR בחושך מוציא ערך נמוך (0), ובאור חזק ערך גבוה (255)
+        // כמו ב-VHDL, עוצמת הנורה הפוכה לערך (255 פחות הערך)
+        let intensity = (255 - ldrVal) / 255;
+        if (intensity < 0) intensity = 0;
+        if (intensity > 1) intensity = 1;
+
+        // החלת "הילת אור" וצבע פנימי לנורה באופן יחסי (0 עד 100%)
+        const bulb = document.querySelector('#lightBulbWrapper .bulb-3d');
+        if (bulb) {
+            bulb.style.boxShadow = `inset -5px -5px 12px rgba(0,0,0,0.6), 0 0 ${70 * intensity}px rgba(241, 196, 15, ${intensity}), 0 0 ${120 * intensity}px rgba(241, 196, 15, ${intensity * 0.4})`;
+            bulb.style.background = `radial-gradient(circle at 30% 30%, rgba(255, 255, 255, ${0.2 + intensity * 0.8}), rgba(241, 196, 15, ${0.1 + intensity * 0.7}) 60%, #111)`;
+        }
+
+        // עדכון הטקסט של האחוזים במסך
+        const bulbTxt = document.getElementById('bulbIntensityTxt');
+        if (bulbTxt) {
+            bulbTxt.innerText = Math.round(intensity * 100) + "%";
+        }
+        // ------------------------------------------------
         const dist = d.distance || d.A || 0;
         const distEl = document.getElementById('liveDist');
         if(distEl) distEl.innerText = dist + " ס\"מ";

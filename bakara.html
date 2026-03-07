@@ -52,20 +52,14 @@
                 <div class="row g-4 justify-content-center">
                     <div class="col-md-4 col-sm-6">
                         <div class="card p-4 text-center shadow-lg">
-                            <h5 class="text-info">Lighting</h5>
+                            <h5 class="text-info">Lighting (Auto)</h5>
                             <div id="lightBulbWrapper" class="lightbulb-container">
                                 <div class="bulb-3d"><div class="glass-highlight"></div></div>
                                 <div class="base-3d"></div>
                             </div>
-                            <div class="card-controls">
-                                <div class="input-group mb-2">
-                                    <button class="btn btn-calm-neutral btn-sm" onclick="updateLightFromInput()">Set</button>
-                                    <input type="number" id="lightInput" class="form-control form-control-sm" placeholder="%">
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-6"><button class="btn btn-calm-on w-100" onclick="setLightState(true)">ON</button></div>
-                                    <div class="col-6"><button class="btn btn-calm-off w-100" onclick="setLightState(false)">OFF</button></div>
-                                </div>
+                            <div class="card-controls mt-3">
+                                <h6 class="text-white-50">Current Brightness</h6>
+                                <h3 id="bulbIntensityTxt" class="text-warning fw-bold">0%</h3>
                             </div>
                         </div>
                     </div>
