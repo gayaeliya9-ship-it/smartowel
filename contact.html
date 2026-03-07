@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
 </head>
-<body class="light-page-bg"> <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-sm">
+<body class="home-layout"> 
+    
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top glass-navbar">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center fw-bold text-info" href="index.html">
-                <img src="img/logo.png" alt="Logo" width="40" height="40" class="me-2"> SmartOwl
+                <img src="img/logo.png" alt="SmartOwl Logo" width="40" height="40" class="me-2" />
+                SmartOwl
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -19,44 +22,52 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Intelligence</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Media Gallery</a></li>
                     <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link btn-dashboard" id="nav-dashboard" style="display: none !important;" href="bakara.html">Command Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="#" onclick="logout()">Sign Out</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <section class="container py-5">
+    <section class="container py-5" style="margin-top: 80px;">
         <div class="row justify-content-center">
             <div class="col-lg-7">
-                <div class="card p-5 shadow-lg">
+                <div class="card p-5 shadow-lg d-flex flex-column text-white">
                     <div class="text-center mb-5">
-                        <h1 class="text-primary fw-bold">צרו קשר</h1>
-                        <p class="lead text-secondary">מלאו את הטופס וניצור קשר במהרה</p>
+                        <h2 class="text-info fw-bold">צרו קשר</h2>
+                        <p class="lead text-white-50">מלאו את הטופס וניצור קשר במהרה</p>
                     </div>
 
                     <form>
-                        <div class="mb-4">
-                            <label class="form-label text-primary fw-bold">שם מלא</label>
-                            <input type="text" class="form-control form-control-lg" placeholder="הכנס שם מלא">
+                        <div class="mb-4 text-start" style="direction: rtl;">
+                            <label class="form-label text-info fw-bold">שם מלא</label>
+                            <input type="text" class="form-control" placeholder="הכנס שם מלא">
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label text-primary fw-bold">כתובת אימייל</label>
-                            <input type="email" class="form-control form-control-lg" placeholder="name@example.com">
+                        <div class="mb-4 text-start" style="direction: rtl;">
+                            <label class="form-label text-info fw-bold">כתובת אימייל</label>
+                            <input type="email" class="form-control" placeholder="name@example.com">
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label text-primary fw-bold">תוכן הפנייה</label>
+                        <div class="mb-4 text-start" style="direction: rtl;">
+                            <label class="form-label text-info fw-bold">תוכן הפנייה</label>
                             <textarea class="form-control" rows="4" placeholder="איך נוכל לעזור?"></textarea>
                         </div>
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg px-5 w-100">שלח פנייה</button>
+                        <div class="text-center mt-5">
+                            <button type="button" class="btn btn-calm btn-lg px-5 w-100">שלח פנייה</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="js/main.js"></script>
 
 </body>
 </html>
